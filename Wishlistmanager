@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WISHLIST MANAGER</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0d0d0d;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(20, 20, 20, 0.95);
+            width: 90%;
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            transition: transform 0.3s;
+        }
+
+        .container:hover {
+            transform: scale(1.03);
+        }
+
+        h2 {
+            color: #00ffff;
+            font-size: 26px;
+            text-shadow: 0 0 10px #00ffff;
+            margin-bottom: 15px;
+        }
+
+        h3 {
+            color: #00bcd4;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            background: #111;
+            color: #0ff;
+            border: 1px solid #0ff;
+            border-radius: 5px;
+            font-size: 14px;
+            outline: none;
+            text-align: left;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: #00bcd4;
+            box-shadow: 0 0 10px #00bcd4;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #00bcd4;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            box-shadow: 0 0 12px rgba(0, 255, 255, 0.7);
+        }
+
+        button:hover {
+            background: #008c9e;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 1);
+        }
+
+        .link-container a {
+            display: block;
+            padding: 12px;
+            background: #00ffff;
+            color: #000;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: 0.3s;
+            text-transform: uppercase;
+            margin-top: 15px;
+        }
+
+        .link-container a:hover {
+            background: #008c9e;
+            color: #fff;
+            box-shadow: 0 0 12px rgba(0, 255, 255, 0.8);
+        }
+
+        p {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #ff4444;
+        }
+    </style>
+</head>
+<body>
+    <h2>WISHLIST MANAGER</h2>
+
+    <div class="container">
+        <h3>ADD TO WISHLIST</h3>
+        <input type="text" id="addItemId" placeholder="ENTER ITEM ID">
+        <input type="text" id="addRegion" placeholder="ENTER REGION (EG., ind)">
+        <input type="text" id="addToken" placeholder="ENTER ACCESS TOKEN">
+        <button onclick="addToWishlist()">Add Item</button>
+        <p id="addResult"></p>
+    </div>
+
+    <div class="container">
+        <h3>DELETE FROM WISHLIST</h3>
+        <input type="text" id="deleteItemId" placeholder="ENTER ITEM ID">
+        <input type="text" id="deleteRegion" placeholder="ENTER REGION (e.g., ind)">
+        <input type="text" id="deleteToken" placeholder="ENTER ACCESS TOKEN">
+        <button onclick="deleteFromWishlist()">Delete Item</button>
+        <p id="deleteResult"></p>
+    </div>
+
+    <div class="container link-container">
+        <h3>GET ACCESS TOKEN</h3>
+        <a href="https://auth.garena.com/universal/oauth?client_id=100067&redirect_uri=https://ff-advance.ff.garena.com/&response_type=token&all_platforms=1&platform=4" target="_blank">Get Token</a>
+    </div>
+
+    <script>
+        function formatRegion(region) {
+            return region.trim().toLowerCase();
+        }
+
+        async function addToWishlist() {
+            let itemId = document.getElementById('addItemId').value;
+            let region = formatRegion(document.getElementById('addRegion').value);
+            let token = document.getElementById('addToken').value;
+
+            if (!itemId || !region || !token) {
+                document.getElementById('addResult').innerText = "PLEASE FILL ALL FIELDS.";
+                return;
+            }
+
+            let url = `https://system.ffgarena.cloud/api/add_item_wishlist?item_id=${itemId}&access_token=${token}&region=${region}`;
+            try {
+                let response = await fetch(url);
+                let result = await response.json();
+                document.getElementById('addResult').innerText = result.message || "SUCCESS";
+            } catch (error) {
+                document.getElementById('addResult').innerText = "FAILED TO ADD ITEM.";
+            }
+        }
+
+        async function deleteFromWishlist() {
+            let itemId = document.getElementById('deleteItemId').value;
+            let region = formatRegion(document.getElementById('deleteRegion').value);
+            let token = document.getElementById('deleteToken').value;
+
+            if (!itemId || !region || !token) {
+                document.getElementById('deleteResult').innerText = "PLEASE FILL ALL FIELDS.";
+                return;
+            }
+
+            let url = `https://system.ffgarena.cloud/api/delete_item_wishlist?item_id=${itemId}&access_token=${token}&region=${region}`;
+            try {
+                let response = await fetch(url);
+                let result = await response.json();
+                document.getElementById('deleteResult').innerText = result.message || "SUCCESS";
+            } catch (error) {
+                document.getElementById('deleteResult').innerText = "FAILED TI DELETE ITEM.";
+            }
+        }
+    </script>
+</body>
+</html>
